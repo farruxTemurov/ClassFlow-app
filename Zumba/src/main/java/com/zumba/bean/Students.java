@@ -1,19 +1,19 @@
 package com.zumba.bean;
 
+import java.time.LocalDate;
+
 public class Students {
 	private int studentId;
 	private String name;
 	private String email;
 	private String phoneNumber;
-	private String registrationDate;
+	private LocalDate registrationDate; // Changed from String to LocalDate
 
 	public Students() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Students(int studentId, String name, String email, String phoneNumber, String registrationDate) {
-		super();
+	public Students(int studentId, String name, String email, String phoneNumber, LocalDate registrationDate) {
 		this.studentId = studentId;
 		this.name = name;
 		this.email = email;
@@ -53,12 +53,11 @@ public class Students {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public String getRegistrationDate() {
+	public LocalDate getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(String registrationDate) {
+	public void setRegistrationDate(LocalDate registrationDate) {
 		this.registrationDate = registrationDate;
 	}
-
 }

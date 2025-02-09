@@ -1,17 +1,18 @@
 package com.zumba.bean;
 
+import java.time.LocalDate;
+
 public class Enrollments {
 	private int enrollmentId;
 	private int studentId;
 	private int batchId;
-	private String enrollmentDate;
+	private LocalDate enrollmentDate; // Use LocalDate instead of String
 
 	public Enrollments() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Enrollments(int enrollmentId, int studentId, int batchId, String enrollmentDate) {
+	public Enrollments(int enrollmentId, int studentId, int batchId, LocalDate enrollmentDate) {
 		super();
 		this.enrollmentId = enrollmentId;
 		this.studentId = studentId;
@@ -43,12 +44,11 @@ public class Enrollments {
 		this.batchId = batchId;
 	}
 
-	public String getEnrollmentDate() {
+	public LocalDate getEnrollmentDate() {
 		return enrollmentDate;
 	}
 
-	public void setEnrollmentDate(String enrollmentDate) {
+	public void setEnrollmentDate(LocalDate enrollmentDate) {
 		this.enrollmentDate = enrollmentDate;
 	}
-
 }

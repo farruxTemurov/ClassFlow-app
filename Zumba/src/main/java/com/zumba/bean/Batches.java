@@ -3,20 +3,19 @@ package com.zumba.bean;
 public class Batches {
 	private int batchId;
 	private String batchName;
-	private String schedule;
-	private String instructor;
+	private int scheduleId; // Foreign Key Reference
+	private int instructorId; // Foreign Key Reference
 
 	public Batches() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Batches(int batchId, String batchName, String schedule, String instructor) {
+	public Batches(int batchId, String batchName, int scheduleId, int instructorId) {
 		super();
 		this.batchId = batchId;
 		this.batchName = batchName;
-		this.schedule = schedule;
-		this.instructor = instructor;
+		this.scheduleId = scheduleId;
+		this.instructorId = instructorId;
 	}
 
 	public int getBatchId() {
@@ -35,20 +34,19 @@ public class Batches {
 		this.batchName = batchName;
 	}
 
-	public String getSchedule() {
-		return schedule;
+	public int getScheduleId() {
+		return scheduleId;
 	}
 
-	public void setSchedule(String schedule) {
-		this.schedule = schedule;
+	public void setScheduleId(int scheduleId) {
+		this.scheduleId = scheduleId;
 	}
 
-	public String getInstructor() {
-		return instructor;
+	public int getInstructorId() {
+		return instructorId;
 	}
 
-	public void setInstructor(String instructor) {
-		this.instructor = instructor;
+	public void setInstructorId(int instructorId) {
+		this.instructorId = instructorId;
 	}
-
 }
