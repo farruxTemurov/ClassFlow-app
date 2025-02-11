@@ -1,30 +1,40 @@
 package com.zumba.dao;
 
 import com.zumba.bean.Batches;
+import com.zumba.resource.DatabaseResource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BatchesDAO {
-	private Connection conn;
 
-	public BatchesDAO(Connection conn) {
-		this.conn = conn;
+	private Connection con;
+
+	public BatchesDAO() {
+		this.con = DatabaseResource.getDbConnection();
 	}
 
-	// ✅ Get All Batches (Including Schedule and Instructor Names)
-	public List<Batches> getAllBatches() throws SQLException {
+	// Add a new batch
+	public boolean addBatch(Batches batch) {
+		String query = "INSERT INTO batches (batch_type, batch_time) VALUES (?, ?)";
+		try (PreparedStatement stmt = con.prepareStatement(query)) {
+			stmt.setString(1, batch.getBatchType());
+			stmt.setString(2, batch.getBatchTime());
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	// Get all batches
+	public List<Batches> getAllBatches() {
 		List<Batches> batchList = new ArrayList<>();
-		String query = "SELECT b.batch_id, b.batch_name, s.schedule_id, s.schedule_name, i.instructor_id, i.instructor_name "
-				+ "FROM batches b " + "JOIN schedules s ON b.schedule_id = s.schedule_id "
-				+ "JOIN instructors i ON b.instructor_id = i.instructor_id";
-
-		try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
-
+		String query = "SELECT * FROM batches";
+		try (Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
 			while (rs.next()) {
-				Batches batch = new Batches(rs.getInt("batch_id"), rs.getString("batch_name"), rs.getInt("schedule_id"),
-						rs.getString("schedule_name"), rs.getInt("instructor_id"), rs.getString("instructor_name"));
-				batchList.add(batch);
+				batchList.add(
+						new Batches(rs.getInt("batch_id"), rs.getString("batch_type"), rs.getString("batch_time")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -32,23 +42,44 @@ public class BatchesDAO {
 		return batchList;
 	}
 
-	// ✅ Add a New Batch
-	public void addBatch(Batches batch) throws SQLException {
-		String query = "INSERT INTO batches (batch_name, schedule_id, instructor_id) VALUES (?, ?, ?)";
-		try (PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setString(1, batch.getBatchName());
-			ps.setInt(2, batch.getScheduleId());
-			ps.setInt(3, batch.getInstructorId());
-			ps.executeUpdate();
+	// Get batch by ID
+	public Batches getBatchById(int id) {
+		String query = "SELECT * FROM batches WHERE batch_id = ?";
+		try (PreparedStatement stmt = con.prepareStatement(query)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return new Batches(rs.getInt("batch_id"), rs.getString("batch_type"), rs.getString("batch_time"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return null;
 	}
 
-	// ✅ Delete a Batch
-	public void deleteBatch(int batchId) throws SQLException {
-		String query = "DELETE FROM batches WHERE batch_id = ?";
-		try (PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setInt(1, batchId);
-			ps.executeUpdate();
+	// Update batch
+	public boolean updateBatch(Batches batch) {
+		String query = "UPDATE batches SET batch_type = ?, batch_time = ? WHERE batch_id = ?";
+		try (PreparedStatement stmt = con.prepareStatement(query)) {
+			stmt.setString(1, batch.getBatchType());
+			stmt.setString(2, batch.getBatchTime());
+			stmt.setInt(3, batch.getBatchId());
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return false;
+	}
+
+	// Delete batch
+	public boolean deleteBatch(int id) {
+		String query = "DELETE FROM batches WHERE batch_id = ?";
+		try (PreparedStatement stmt = con.prepareStatement(query)) {
+			stmt.setInt(1, id);
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

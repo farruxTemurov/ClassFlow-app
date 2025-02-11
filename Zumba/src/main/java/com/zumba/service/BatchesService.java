@@ -1,44 +1,38 @@
 package com.zumba.service;
 
-import com.zumba.resource.DatabaseResource;
+import java.util.List;
 import com.zumba.bean.Batches;
 import com.zumba.dao.BatchesDAO;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
 public class BatchesService {
 	private BatchesDAO batchesDAO;
-	private Connection conn;
 
 	public BatchesService() {
-		this.conn = DatabaseResource.getDbConnection();
-		this.batchesDAO = new BatchesDAO(conn);
+		this.batchesDAO = new BatchesDAO();
 	}
 
+	// Add a new batch
+	public boolean addBatch(Batches batch) {
+		return batchesDAO.addBatch(batch);
+	}
+
+	// Retrieve all batches
 	public List<Batches> getAllBatches() {
-		try {
-			return batchesDAO.getAllBatches();
-		} catch (SQLException e) {
-			e.printStackTrace(); // Log error for debugging
-			return null; // Return null or handle the error in another way
-		}
+		return batchesDAO.getAllBatches();
 	}
 
-	public void addBatch(Batches batch) {
-		try {
-			batchesDAO.addBatch(batch);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	// Retrieve batch by ID
+	public Batches getBatchById(int batchId) {
+		return batchesDAO.getBatchById(batchId);
 	}
 
-	public void deleteBatch(int batchId) {
-		try {
-			batchesDAO.deleteBatch(batchId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	// Update batch details
+	public boolean updateBatch(Batches batch) {
+		return batchesDAO.updateBatch(batch);
+	}
+
+	// Delete batch
+	public boolean deleteBatch(int batchId) {
+		return batchesDAO.deleteBatch(batchId);
 	}
 }
