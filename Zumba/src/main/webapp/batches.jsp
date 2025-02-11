@@ -1,81 +1,90 @@
-<%@ page import="java.util.List"%>
-<%@ page import="com.zumba.bean.Batches"%>
-<%@ page import="com.zumba.bean.Schedules"%>
-<%@ page import="com.zumba.bean.Instructors"%>
-<%@ page import="javax.servlet.http.HttpServletRequest"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page
+	import="java.util.List, com.zumba.bean.Batches, com.zumba.service.BatchesService"%>
+<%
+BatchesService batchesService = new BatchesService();
+List<Batches> batches = batchesService.getAllBatches();
+%>
+<!DOCTYPE html>
 <html>
 <head>
-<title>Batches</title>
-<script>
-	function toggleForm() {
-		var form = document.getElementById("addBatchForm");
-		form.style.display = form.style.display === "none" ? "block" : "none";
-	}
-</script>
+<meta charset="UTF-8">
+<title>Manage Batches</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+}
+
+.container {
+	width: 50%;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+input, button {
+	display: block;
+	width: 100%;
+	margin: 10px 0;
+	padding: 10px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+th, td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: left;
+}
+
+th {
+	background-color: #f4f4f4;
+}
+</style>
 </head>
 <body>
-	<h2>Batches</h2>
-	<button onclick="toggleForm()">Add New Batch</button>
-
-	<!-- Batch Table -->
-	<table border="1">
-		<tr>
-			<th>Batch ID</th>
-			<th>Batch Name</th>
-			<th>Schedule</th>
-			<th>Instructor</th>
-		</tr>
-		<%
-		List<Batches> batches = (List<Batches>) request.getAttribute("batches");
-		if (batches != null) {
-			for (Batches batch : batches) {
-		%>
-		<tr>
-			<td><%=batch.getBatchId()%></td>
-			<td><%=batch.getBatchName()%></td>
-			<td><%=batch.getScheduleName()%></td>
-			<td><%=batch.getInstructorName()%></td>
-		</tr>
-		<%
-		}
-		}
-		%>
-	</table>
-
-	<!-- Add Batch Form -->
-	<div id="addBatchForm" style="display: none;">
-		<h3>Add New Batch</h3>
-		<form action="batches" method="post">
-			<label>Batch Name:</label> <input type="text" name="batchName"
-				required><br> <label>Schedule:</label> <select
-				name="scheduleId" required>
-				<%
-				List<Schedules> schedules = (List<Schedules>) request.getAttribute("schedules");
-				if (schedules != null) {
-					for (Schedules schedule : schedules) {
-				%>
-				<option value="<%=schedule.getScheduleId()%>"><%=schedule.getScheduleName()%></option>
-				<%
-				}
-				}
-				%>
-			</select><br> <label>Instructor:</label> <select name="instructorId"
-				required>
-				<%
-				List<Instructors> instructors = (List<Instructors>) request.getAttribute("instructors");
-				if (instructors != null) {
-					for (Instructors instructor : instructors) {
-				%>
-				<option value="<%=instructor.getInstructorId()%>"><%=instructor.getInstructorName()%></option>
-				<%
-				}
-				}
-				%>
-			</select><br>
-
-			<button type="submit">Add Batch</button>
+	<div class="container">
+		<h2>Add New Batch</h2>
+		<form action="BatchesController" method="post">
+			<input type="text" name="batchType"
+				placeholder="Batch Type (e.g., Beginner, Advanced)" required>
+			<input type="text" name="batchTime"
+				placeholder="Batch Time (e.g., 10:00 AM - 11:00 AM)" required>
+			<button type="submit" name="action" value="add">Add Batch</button>
 		</form>
+
+		<h2>Existing Batches</h2>
+		<table>
+			<tr>
+				<th>Batch ID</th>
+				<th>Batch Type</th>
+				<th>Batch Time</th>
+				<th>Action</th>
+			</tr>
+			<%
+			for (Batches batch : batches) {
+			%>
+			<tr>
+				<td><%=batch.getBatchId()%></td>
+				<td><%=batch.getBatchType()%></td>
+				<td><%=batch.getBatchTime()%></td>
+				<td>
+					<form action="BatchesController" method="post">
+						<input type="hidden" name="batchId"
+							value="<%=batch.getBatchId()%>">
+						<button type="submit" name="action" value="delete"
+							onclick="return confirm('Are you sure?')">Delete</button>
+					</form>
+				</td>
+			</tr>
+			<%
+			}
+			%>
+		</table>
 	</div>
 </body>
 </html>
