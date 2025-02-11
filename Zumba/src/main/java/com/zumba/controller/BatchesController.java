@@ -1,14 +1,7 @@
 package com.zumba.controller;
 
-import java.sql.SQLException;
-
 import com.zumba.bean.Batches;
-import com.zumba.bean.Schedules;
-import com.zumba.bean.Instructors;
 import com.zumba.service.BatchesService;
-import com.zumba.service.SchedulesService;
-import com.zumba.service.InstructorsService;
-
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -17,38 +10,97 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/batches")
+@WebServlet("/BatchesController")
 public class BatchesController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BatchesService batchesService;
-	private SchedulesService schedulesService;
-	private InstructorsService instructorsService;
 
-	public void init() {
-		batchesService = new BatchesService();
-		schedulesService = new SchedulesService();
-		instructorsService = new InstructorsService();
+	public BatchesController() {
+		this.batchesService = new BatchesService();
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		try {
-			List<Batches> batchList = batchesService.getAllBatches();
-			List<Schedules> scheduleList = schedulesService.getAllSchedules();
-			List<Instructors> instructorList = instructorsService.getAllInstructors();
+		String action = request.getParameter("action");
 
-			// Debugging: Print batch list to console
-			System.out.println("Batches List: " + batchList);
+		if (action == null) {
+			response.sendRedirect("batches.jsp");
+			return;
+		}
 
-			request.setAttribute("batches", batchList);
-			request.setAttribute("schedules", scheduleList);
-			request.setAttribute("instructors", instructorList);
-
-			request.getRequestDispatcher("batches.jsp").forward(request, response);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new ServletException("Error retrieving batches, schedules, or instructors", e);
+		switch (action) {
+		case "add":
+			addBatch(request, response);
+			break;
+		case "update":
+			updateBatch(request, response);
+			break;
+		case "delete":
+			deleteBatch(request, response);
+			break;
+		case "view":
+			getAllBatches(request, response);
+			break;
+		default:
+			response.sendRedirect("batches.jsp");
+			break;
 		}
 	}
 
+	// ✅ Add a new batch
+	private void addBatch(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String batchType = request.getParameter("batch_type");
+		String batchTime = request.getParameter("batch_time");
+
+		Batches batch = new Batches(0, batchType, batchTime);
+		boolean isAdded = batchesService.addBatch(batch);
+
+		if (isAdded) {
+			request.setAttribute("message", "Batch added successfully!");
+		} else {
+			request.setAttribute("error", "Failed to add batch!");
+		}
+		request.getRequestDispatcher("batches.jsp").forward(request, response);
+	}
+
+	// ✅ Retrieve all batches
+	private void getAllBatches(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		List<Batches> batchList = batchesService.getAllBatches();
+		request.setAttribute("batches", batchList);
+		request.getRequestDispatcher("batches.jsp").forward(request, response);
+	}
+
+	// ✅ Update a batch
+	private void updateBatch(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		int batchId = Integer.parseInt(request.getParameter("batch_id"));
+		String batchType = request.getParameter("batch_type");
+		String batchTime = request.getParameter("batch_time");
+
+		Batches batch = new Batches(batchId, batchType, batchTime);
+		boolean isUpdated = batchesService.updateBatch(batch);
+
+		if (isUpdated) {
+			request.setAttribute("message", "Batch updated successfully!");
+		} else {
+			request.setAttribute("error", "Failed to update batch!");
+		}
+		request.getRequestDispatcher("batches.jsp").forward(request, response);
+	}
+
+	// ✅ Delete a batch
+	private void deleteBatch(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		int batchId = Integer.parseInt(request.getParameter("batch_id"));
+		boolean isDeleted = batchesService.deleteBatch(batchId);
+
+		if (isDeleted) {
+			request.setAttribute("message", "Batch deleted successfully!");
+		} else {
+			request.setAttribute("error", "Failed to delete batch!");
+		}
+		request.getRequestDispatcher("batches.jsp").forward(request, response);
+	}
 }
