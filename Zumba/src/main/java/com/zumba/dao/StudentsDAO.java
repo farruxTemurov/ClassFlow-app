@@ -40,17 +40,21 @@ public class StudentsDAO {
 		return null;
 	}
 
-	// Get all students
 	public List<Students> getAllStudents() throws SQLException {
-		List<Students> students = new ArrayList<>();
-		String sql = "SELECT * FROM students";
-		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+		List<Students> studentsList = new ArrayList<>();
+		String query = "SELECT * FROM students";
+
+		try (Connection conn = DatabaseResource.getDbConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
 			while (rs.next()) {
-				students.add(new Students(rs.getInt("student_id"), rs.getString("name"), rs.getString("email"),
-						rs.getString("phone_number"), rs.getDate("registration_date").toLocalDate()));
+				Students student = new Students(rs.getInt("student_id"), rs.getString("name"), rs.getString("email"),
+						rs.getString("phone_number"), rs.getDate("registration_date").toLocalDate());
+				studentsList.add(student);
 			}
 		}
-		return students;
+		return studentsList;
 	}
 
 	// Delete student by ID

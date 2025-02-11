@@ -1,24 +1,21 @@
 package com.zumba.bean;
 
-import java.time.LocalDate;
-
 public class Students {
 	private int studentId;
 	private String name;
+	private String telephone;
 	private String email;
-	private String phoneNumber;
-	private LocalDate registrationDate; // Changed from String to LocalDate
+	private int batchId; // Foreign key
 
 	public Students() {
-		super();
 	}
 
-	public Students(int studentId, String name, String email, String phoneNumber, LocalDate registrationDate) {
+	public Students(int studentId, String name, String telephone, String email, int batchId) {
 		this.studentId = studentId;
 		this.name = name;
+		this.telephone = telephone;
 		this.email = email;
-		this.phoneNumber = phoneNumber;
-		this.registrationDate = registrationDate;
+		this.batchId = batchId;
 	}
 
 	public int getStudentId() {
@@ -37,6 +34,14 @@ public class Students {
 		this.name = name;
 	}
 
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -45,19 +50,17 @@ public class Students {
 		this.email = email;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public int getBatchId() {
+		return batchId;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setBatchId(int batchId) {
+		this.batchId = batchId;
 	}
 
-	public LocalDate getRegistrationDate() {
-		return registrationDate;
-	}
-
-	public void setRegistrationDate(LocalDate registrationDate) {
-		this.registrationDate = registrationDate;
+	@Override
+	public String toString() {
+		return "Students [studentId=" + studentId + ", name=" + name + ", telephone=" + telephone + ", email=" + email
+				+ ", batchId=" + batchId + "]";
 	}
 }

@@ -5,6 +5,7 @@ import com.zumba.dao.StudentsDAO;
 import com.zumba.resource.DatabaseResource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentsService {
@@ -45,7 +46,7 @@ public class StudentsService {
 			return studentsDAO.getAllStudents();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return null;
+			return new ArrayList<Students>(); // Corrected syntax
 		}
 	}
 

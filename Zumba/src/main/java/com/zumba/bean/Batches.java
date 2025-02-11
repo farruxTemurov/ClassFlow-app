@@ -2,24 +2,18 @@ package com.zumba.bean;
 
 public class Batches {
 	private int batchId;
-	private String batchName;
-	private int scheduleId;
-	private String scheduleName; // Add this
-	private int instructorId;
-	private String instructorName; // Add this
+	private String batchType;
+	private String batchTime;
 
-	// Constructor
-	public Batches(int batchId, String batchName, int scheduleId, String scheduleName, int instructorId,
-			String instructorName) {
-		this.batchId = batchId;
-		this.batchName = batchName;
-		this.scheduleId = scheduleId;
-		this.scheduleName = scheduleName;
-		this.instructorId = instructorId;
-		this.instructorName = instructorName;
+	public Batches() {
 	}
 
-	// Getters and Setters
+	public Batches(int batchId, String batchType, String batchTime) {
+		this.batchId = batchId;
+		this.batchType = batchType;
+		this.batchTime = batchTime;
+	}
+
 	public int getBatchId() {
 		return batchId;
 	}
@@ -28,43 +22,24 @@ public class Batches {
 		this.batchId = batchId;
 	}
 
-	public String getBatchName() {
-		return batchName;
+	public String getBatchType() {
+		return batchType;
 	}
 
-	public void setBatchName(String batchName) {
-		this.batchName = batchName;
+	public void setBatchType(String batchType) {
+		this.batchType = batchType;
 	}
 
-	public int getScheduleId() {
-		return scheduleId;
+	public String getBatchTime() {
+		return batchTime;
 	}
 
-	public void setScheduleId(int scheduleId) {
-		this.scheduleId = scheduleId;
+	public void setBatchTime(String batchTime) {
+		this.batchTime = batchTime;
 	}
 
-	public String getScheduleName() {
-		return scheduleName;
-	} // Add Getter
-
-	public void setScheduleName(String scheduleName) {
-		this.scheduleName = scheduleName;
-	} // Add Setter
-
-	public int getInstructorId() {
-		return instructorId;
+	@Override
+	public String toString() {
+		return "Batches [batchId=" + batchId + ", batchType=" + batchType + ", batchTime=" + batchTime + "]";
 	}
-
-	public void setInstructorId(int instructorId) {
-		this.instructorId = instructorId;
-	}
-
-	public String getInstructorName() {
-		return instructorName;
-	} // Add Getter
-
-	public void setInstructorName(String instructorName) {
-		this.instructorName = instructorName;
-	} // Add Setter
 }

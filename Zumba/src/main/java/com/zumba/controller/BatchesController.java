@@ -34,8 +34,11 @@ public class BatchesController extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			List<Batches> batchList = batchesService.getAllBatches();
-			List<Schedules> scheduleList = schedulesService.getAllSchedules(); // May throw SQLException
-			List<Instructors> instructorList = instructorsService.getAllInstructors(); // May throw SQLException
+			List<Schedules> scheduleList = schedulesService.getAllSchedules();
+			List<Instructors> instructorList = instructorsService.getAllInstructors();
+
+			// Debugging: Print batch list to console
+			System.out.println("Batches List: " + batchList);
 
 			request.setAttribute("batches", batchList);
 			request.setAttribute("schedules", scheduleList);
@@ -43,6 +46,7 @@ public class BatchesController extends HttpServlet {
 
 			request.getRequestDispatcher("batches.jsp").forward(request, response);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new ServletException("Error retrieving batches, schedules, or instructors", e);
 		}
 	}

@@ -8,9 +8,20 @@
 <title>Enrollments</title>
 </head>
 <body>
-	<h2>Enroll a Student</h2>
+	<h2>Register as a Student</h2>
+	<form action="enrollments" method="post">
+		<label>Name:</label> <input type="text" name="name" required>
+		<br> <label>Email:</label> <input type="email" name="email"
+			required> <br> <label>Phone Number:</label> <input
+			type="text" name="phone" required> <br> <label>Registration
+			Date:</label> <input type="date" name="registrationDate" required> <br>
 
-	<!-- Enrollment Form -->
+		<button type="submit">Register</button>
+	</form>
+
+	<hr>
+
+	<h2>Enroll in a Batch</h2>
 	<form action="enrollments" method="post">
 		<label>Student:</label> <select name="studentId" required>
 			<option value="" disabled selected>Select a Student</option>
@@ -36,6 +47,12 @@
 			}
 			}
 			%>
+		</select> <br> <label>Time Slot:</label> <select name="batchTime" required>
+			<option value="" disabled selected>Select a Time</option>
+			<option value="06:00 AM">06:00 AM</option>
+			<option value="08:00 AM">08:00 AM</option>
+			<option value="06:00 PM">06:00 PM</option>
+			<option value="08:00 PM">08:00 PM</option>
 		</select> <br>
 
 		<button type="submit">Enroll</button>

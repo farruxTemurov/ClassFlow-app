@@ -1,6 +1,8 @@
 package com.zumba.controller;
 
+import com.zumba.bean.Batches;
 import com.zumba.bean.Students;
+import com.zumba.service.BatchesService;
 import com.zumba.service.StudentsService;
 
 import java.io.IOException;
@@ -27,8 +29,12 @@ public class StudentsController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Students> studentsList = studentsService.getAllStudents();
+
+		// Debugging: Print student list in console
+		System.out.println("Students List: " + studentsList);
+
 		request.setAttribute("students", studentsList);
-		request.getRequestDispatcher("students.jsp").forward(request, response);
+		request.getRequestDispatcher("enrollments.jsp").forward(request, response);
 	}
 
 	// Handle POST requests (Add a new student)
