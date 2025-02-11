@@ -2,6 +2,7 @@ package com.zumba.controller;
 
 import com.zumba.bean.Batches;
 import com.zumba.service.BatchesService;
+
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -17,6 +18,12 @@ public class BatchesController extends HttpServlet {
 
 	public BatchesController() {
 		this.batchesService = new BatchesService();
+	}
+
+	// ✅ Ensure getAllBatches runs on GET request
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		getAllBatches(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -38,9 +45,6 @@ public class BatchesController extends HttpServlet {
 		case "delete":
 			deleteBatch(request, response);
 			break;
-		case "view":
-			getAllBatches(request, response);
-			break;
 		default:
 			response.sendRedirect("batches.jsp");
 			break;
@@ -50,8 +54,14 @@ public class BatchesController extends HttpServlet {
 	// ✅ Add a new batch
 	private void addBatch(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String batchType = request.getParameter("batch_type");
-		String batchTime = request.getParameter("batch_time");
+		String batchType = request.getParameter("batchType"); // Fixed parameter name
+		String batchTime = request.getParameter("batchTime"); // Fixed parameter name
+
+		if (batchType == null || batchType.trim().isEmpty() || batchTime == null || batchTime.trim().isEmpty()) {
+			request.setAttribute("error", "Batch Type and Time cannot be empty.");
+			getAllBatches(request, response);
+			return;
+		}
 
 		Batches batch = new Batches(0, batchType, batchTime);
 		boolean isAdded = batchesService.addBatch(batch);
@@ -61,10 +71,10 @@ public class BatchesController extends HttpServlet {
 		} else {
 			request.setAttribute("error", "Failed to add batch!");
 		}
-		request.getRequestDispatcher("batches.jsp").forward(request, response);
+		getAllBatches(request, response);
 	}
 
-	// ✅ Retrieve all batches
+	// ✅ Retrieve all batches (Updated to run on GET requests)
 	private void getAllBatches(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Batches> batchList = batchesService.getAllBatches();
@@ -75,32 +85,54 @@ public class BatchesController extends HttpServlet {
 	// ✅ Update a batch
 	private void updateBatch(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		int batchId = Integer.parseInt(request.getParameter("batch_id"));
-		String batchType = request.getParameter("batch_type");
-		String batchTime = request.getParameter("batch_time");
+		try {
+			int batchId = Integer.parseInt(request.getParameter("batchId")); // Fixed parameter name
+			String batchType = request.getParameter("batchType"); // Fixed parameter name
+			String batchTime = request.getParameter("batchTime"); // Fixed parameter name
 
-		Batches batch = new Batches(batchId, batchType, batchTime);
-		boolean isUpdated = batchesService.updateBatch(batch);
+			if (batchType == null || batchType.trim().isEmpty() || batchTime == null || batchTime.trim().isEmpty()) {
+				request.setAttribute("error", "Batch Type and Time cannot be empty.");
+				getAllBatches(request, response);
+				return;
+			}
 
-		if (isUpdated) {
-			request.setAttribute("message", "Batch updated successfully!");
-		} else {
-			request.setAttribute("error", "Failed to update batch!");
+			Batches batch = new Batches(batchId, batchType, batchTime);
+			boolean isUpdated = batchesService.updateBatch(batch);
+
+			if (isUpdated) {
+				request.setAttribute("message", "Batch updated successfully!");
+			} else {
+				request.setAttribute("error", "Failed to update batch!");
+			}
+		} catch (NumberFormatException e) {
+			request.setAttribute("error", "Invalid batch ID.");
 		}
-		request.getRequestDispatcher("batches.jsp").forward(request, response);
+		getAllBatches(request, response);
 	}
 
-	// ✅ Delete a batch
+	// ✅ Delete a batch (Prevents NumberFormatException)
 	private void deleteBatch(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		int batchId = Integer.parseInt(request.getParameter("batch_id"));
-		boolean isDeleted = batchesService.deleteBatch(batchId);
+		String batchIdStr = request.getParameter("batchId"); // Fixed parameter name
 
-		if (isDeleted) {
-			request.setAttribute("message", "Batch deleted successfully!");
-		} else {
-			request.setAttribute("error", "Failed to delete batch!");
+		if (batchIdStr == null || batchIdStr.trim().isEmpty()) {
+			request.setAttribute("error", "Batch ID is missing.");
+			getAllBatches(request, response);
+			return;
 		}
-		request.getRequestDispatcher("batches.jsp").forward(request, response);
+
+		try {
+			int batchId = Integer.parseInt(batchIdStr);
+			boolean isDeleted = batchesService.deleteBatch(batchId);
+
+			if (isDeleted) {
+				request.setAttribute("message", "Batch deleted successfully!");
+			} else {
+				request.setAttribute("error", "Failed to delete batch!");
+			}
+		} catch (NumberFormatException e) {
+			request.setAttribute("error", "Invalid batch ID format.");
+		}
+		getAllBatches(request, response);
 	}
 }

@@ -77,8 +77,10 @@ th {
 						<input type="hidden" name="batchId"
 							value="<%=batch.getBatchId()%>">
 						<button type="submit" name="action" value="delete"
-							onclick="return confirm('Are you sure?')">Delete</button>
+							onclick="return confirm('Are you sure you want to delete this batch?')">
+							Delete</button>
 					</form>
+
 				</td>
 			</tr>
 			<%
