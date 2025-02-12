@@ -3,8 +3,11 @@
 <%@ page
 	import="java.util.List, com.zumba.bean.Batches, com.zumba.service.BatchesService"%>
 <%
-BatchesService batchesService = new BatchesService();
-List<Batches> batches = batchesService.getAllBatches();
+List<Batches> batches = (List<Batches>) request.getAttribute("batches");
+if (batches == null) {
+	BatchesService batchesService = new BatchesService();
+	batches = batchesService.getAllBatches();
+}
 %>
 <!DOCTYPE html>
 <html>
@@ -49,7 +52,8 @@ th {
 <body>
 	<div class="container">
 		<h2>Add New Batch</h2>
-		<form action="BatchesController" method="post">
+		<form action="<%=request.getContextPath()%>/BatchesController"
+			method="post">
 			<input type="text" name="batchType"
 				placeholder="Batch Type (e.g., Beginner, Advanced)" required>
 			<input type="text" name="batchTime"
