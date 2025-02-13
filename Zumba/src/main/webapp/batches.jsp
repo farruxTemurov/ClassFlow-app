@@ -1,13 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page
-	import="java.util.List, com.zumba.bean.Batches, com.zumba.service.BatchesService"%>
+<%@ page import="java.util.List, com.zumba.bean.Batches"%>
 <%
 List<Batches> batches = (List<Batches>) request.getAttribute("batches");
-if (batches == null) {
-	BatchesService batchesService = new BatchesService();
-	batches = batchesService.getAllBatches();
-}
+String message = (String) request.getAttribute("message");
+String error = (String) request.getAttribute("error");
 %>
 <!DOCTYPE html>
 <html>
@@ -47,11 +44,35 @@ th, td {
 th {
 	background-color: #f4f4f4;
 }
+
+.success {
+	color: green;
+}
+
+.error {
+	color: red;
+}
 </style>
 </head>
 <body>
 	<div class="container">
 		<h2>Add New Batch</h2>
+
+		<%
+		if (message != null) {
+		%>
+		<p class="success"><%=message%></p>
+		<%
+		}
+		%>
+		<%
+		if (error != null) {
+		%>
+		<p class="error"><%=error%></p>
+		<%
+		}
+		%>
+
 		<form action="<%=request.getContextPath()%>/BatchesController"
 			method="post">
 			<input type="text" name="batchType"
@@ -70,24 +91,34 @@ th {
 				<th>Action</th>
 			</tr>
 			<%
-			for (Batches batch : batches) {
+			if (batches != null) {
+				for (Batches batch : batches) {
 			%>
 			<tr>
 				<td><%=batch.getBatchId()%></td>
 				<td><%=batch.getBatchType()%></td>
 				<td><%=batch.getBatchTime()%></td>
 				<td>
-					<form action="BatchesController" method="post">
+					<!-- Delete Form -->
+					<form action="BatchesController" method="post"
+						style="display: inline;">
 						<input type="hidden" name="batchId"
 							value="<%=batch.getBatchId()%>">
 						<button type="submit" name="action" value="delete"
-							onclick="return confirm('Are you sure you want to delete this batch?')">
-							Delete</button>
+							onclick="return confirm('Are you sure you want to delete this batch?')">Delete</button>
+					</form> <!-- Update Form -->
+					<form action="BatchesController" method="post"
+						style="display: inline;">
+						<input type="hidden" name="batchId"
+							value="<%=batch.getBatchId()%>"> <input type="text"
+							name="batchType" placeholder="New Type" required> <input
+							type="text" name="batchTime" placeholder="New Time" required>
+						<button type="submit" name="action" value="update">Update</button>
 					</form>
-
 				</td>
 			</tr>
 			<%
+			}
 			}
 			%>
 		</table>
