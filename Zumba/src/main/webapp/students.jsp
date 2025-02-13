@@ -2,19 +2,21 @@
 	pageEncoding="UTF-8"%>
 <%@ page
 	import="java.util.List, com.zumba.bean.Batches, com.zumba.bean.Students, com.zumba.service.BatchesService, com.zumba.service.StudentsService"%>
+
 <%
 BatchesService batchesService = new BatchesService();
 List<Batches> batches = batchesService.getAllBatches();
 
 StudentsService studentsService = new StudentsService();
-Students studentResult = null;
-String searchName = request.getParameter("searchName");
-String searchEmail = request.getParameter("searchEmail");
+Students student = (Students) request.getAttribute("student");
 
-if (searchName != null && searchEmail != null) {
-	studentResult = studentsService.searchStudent(searchName, searchEmail);
-}
+String message = (String) session.getAttribute("message");
+String error = (String) session.getAttribute("error");
+
+session.removeAttribute("message");
+session.removeAttribute("error");
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,11 +39,36 @@ input, select, button {
 	margin: 10px 0;
 	padding: 10px;
 }
+
+.message {
+	color: green;
+}
+
+.error {
+	color: red;
+}
 </style>
 </head>
 <body>
 	<div class="container">
 		<h2>Register Student</h2>
+
+		<%
+		if (message != null) {
+		%>
+		<p class="message"><%=message%></p>
+		<%
+		}
+		%>
+
+		<%
+		if (error != null) {
+		%>
+		<p class="error"><%=error%></p>
+		<%
+		}
+		%>
+
 		<form action="StudentsController" method="post">
 			<input type="text" name="name" placeholder="Full Name" required>
 			<input type="text" name="telephone" placeholder="Telephone" required>
@@ -51,10 +78,9 @@ input, select, button {
 				<%
 				for (Batches batch : batches) {
 				%>
-				<option value="<%=batch.getBatchId()%>">
-					<%=batch.getBatchType()%> -
-					<%=batch.getBatchTime()%>
-				</option>
+				<option value="<%=batch.getBatchId()%>"><%=batch.getBatchType()%>
+					-
+					<%=batch.getBatchTime()%></option>
 				<%
 				}
 				%>
@@ -63,41 +89,51 @@ input, select, button {
 		</form>
 
 		<h2>Search Student</h2>
-		<form method="get">
+		<form action="StudentsController" method="get">
 			<input type="text" name="searchName" placeholder="Enter Name"
 				required> <input type="email" name="searchEmail"
 				placeholder="Enter Email" required>
-			<button type="submit">Search</button>
+			<button type="submit" name="action" value="search">Search</button>
 		</form>
 
 		<%
-		if (studentResult != null) {
+		if (student != null) {
 		%>
 		<h3>Student Details:</h3>
-		<p>
-			<strong>Name:</strong>
-			<%=studentResult.getName()%></p>
-		<p>
-			<strong>Telephone:</strong>
-			<%=studentResult.getTelephone()%></p>
-		<p>
-			<strong>Email:</strong>
-			<%=studentResult.getEmail()%></p>
-		<%
-		if (studentResult.getBatchId() > 0) {
-		%>
-		<p>
-			<strong>Batch ID:</strong>
-			<%=studentResult.getBatchId()%></p>
-		<%
-		} else {
-		%>
-		<p>
-			<strong>Batch:</strong> Not assigned
-		</p>
-		<%
-		}
-		%>
+		<form action="StudentsController" method="post">
+			<input type="hidden" name="studentId"
+				value="<%=student.getStudentId()%>">
+			<p>
+				<strong>Name:</strong> <input type="text" name="name"
+					value="<%=student.getName()%>" required>
+			</p>
+			<p>
+				<strong>Telephone:</strong> <input type="text" name="telephone"
+					value="<%=student.getTelephone()%>" required>
+			</p>
+			<p>
+				<strong>Email:</strong> <input type="email" name="email"
+					value="<%=student.getEmail()%>" required>
+			</p>
+			<p>
+				<strong>Batch ID:</strong> <select name="batchId">
+					<option value="">Select a batch</option>
+					<%
+					for (Batches batch : batches) {
+					%>
+					<option value="<%=batch.getBatchId()%>"
+						<%=(batch.getBatchId() == student.getBatchId()) ? "selected" : ""%>>
+						<%=batch.getBatchType()%> -
+						<%=batch.getBatchTime()%>
+					</option>
+					<%
+					}
+					%>
+				</select>
+			</p>
+			<button type="submit" name="action" value="update">Update</button>
+			<button type="submit" name="action" value="delete">Delete</button>
+		</form>
 		<%
 		}
 		%>

@@ -11,69 +11,68 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/StudentsController")
 public class StudentsController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private StudentsService studentsService;
+    private static final long serialVersionUID = 1L;
+    private StudentsService studentsService;
 
-	public StudentsController() {
-		this.studentsService = new StudentsService();
-	}
+    public StudentsController() {
+        this.studentsService = new StudentsService();
+    }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String action = request.getParameter("action");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("search".equals(action)) {
+            searchStudent(request, response);
+        } else {
+            response.sendRedirect("students.jsp");
+        }
+    }
 
-		if (action == null) {
-			response.sendRedirect("students.jsp");
-			return;
-		}
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("register".equals(action)) {
+            registerStudent(request, response);
+        } else {
+            response.sendRedirect("students.jsp");
+        }
+    }
 
-		switch (action) {
-		case "register":
-			registerStudent(request, response);
-			break;
-		case "search":
-			searchStudent(request, response);
-			break;
-		default:
-			response.sendRedirect("students.jsp");
-			break;
-		}
-	}
+    private void registerStudent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("Register request received");
 
-	// ✅ Register a new student
-	private void registerStudent(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String name = request.getParameter("name");
-		String telephone = request.getParameter("telephone");
-		String email = request.getParameter("email");
-		String batchIdStr = request.getParameter("batch_id");
+        String name = request.getParameter("name");
+        String telephone = request.getParameter("telephone");
+        String email = request.getParameter("email");
+        String batchIdStr = request.getParameter("batchId");
 
-		int batchId = (batchIdStr != null && !batchIdStr.isEmpty()) ? Integer.parseInt(batchIdStr) : 0;
+        int batchId = (batchIdStr != null && !batchIdStr.isEmpty()) ? Integer.parseInt(batchIdStr) : 0;
+        Students student = new Students(0, name, telephone, email, batchId);
 
-		Students student = new Students(0, name, telephone, email, batchId);
-		boolean isRegistered = studentsService.registerStudent(student);
+        boolean isRegistered = studentsService.registerStudent(student);
 
-		if (isRegistered) {
-			request.setAttribute("message", "Student registered successfully!");
-		} else {
-			request.setAttribute("error", "Failed to register student!");
-		}
-		request.getRequestDispatcher("students.jsp").forward(request, response);
-	}
+        if (isRegistered) {
+            request.getSession().setAttribute("message", "Student registered successfully!");
+        } else {
+            request.getSession().setAttribute("error", "Failed to register student!");
+        }
+        response.sendRedirect("students.jsp");
+    }
 
-	// ✅ Search student by Name & Email
-	private void searchStudent(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String name = request.getParameter("name");
-		String email = request.getParameter("email");
+    private void searchStudent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("Search request received");
 
-		Students student = studentsService.searchStudent(name, email);
+        String name = request.getParameter("searchName");
+        String email = request.getParameter("searchEmail");
 
-		if (student != null) {
-			request.setAttribute("student", student);
-		} else {
-			request.setAttribute("error", "Student not found!");
-		}
-		request.getRequestDispatcher("students.jsp").forward(request, response);
-	}
+        Students student = studentsService.searchStudent(name, email);
+        if (student != null) {
+            request.setAttribute("student", student);
+        } else {
+            request.setAttribute("error", "Student not found!");
+        }
+        request.getRequestDispatcher("students.jsp").forward(request, response);
+    }
 }
