@@ -14,7 +14,7 @@ List<Batches> batchList = batchesService.getAllBatches();
 <title>Student Registration</title>
 </head>
 <body>
-
+	<jsp:include page="navbar.jsp" />
 	<h2>Register Student</h2>
 	<form action="StudentsController" method="post">
 		<input type="hidden" name="action" value="register"> <label>Name:</label>

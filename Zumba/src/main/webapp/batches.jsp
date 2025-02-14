@@ -22,6 +22,7 @@ String error = (String) request.getAttribute("error");
     </style>
 </head>
 <body>
+	<jsp:include page="navbar.jsp" />
     <div class="container">
         <h2>Add New Batch</h2>
         
