@@ -1,78 +1,92 @@
 package com.zumba.controller;
 
+import com.zumba.bean.Batches;
 import com.zumba.bean.Students;
+import com.zumba.service.BatchesService;
 import com.zumba.service.StudentsService;
-import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/StudentsController")
 public class StudentsController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     private StudentsService studentsService;
+    private BatchesService batchesService;
 
-    public StudentsController() {
-        this.studentsService = new StudentsService();
+    public void init() {
+        studentsService = new StudentsService();
+        batchesService = new BatchesService();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if ("search".equals(action)) {
-            searchStudent(request, response);
-        } else {
-            response.sendRedirect("students.jsp");
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("DEBUG: StudentsController - Handling GET request...");
+
+        // Fetch batches
+        List<Batches> batchesList = batchesService.getAllBatches();
+        request.setAttribute("batchesList", batchesList);
+
+        System.out.println("DEBUG: Number of batches retrieved: " + (batchesList != null ? batchesList.size() : "null"));
+
+        // Forward to students.jsp
+        request.getRequestDispatcher("students.jsp").forward(request, response);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("DEBUG: StudentsController POST request received");
+
         String action = request.getParameter("action");
+        System.out.println("DEBUG: Action = " + action);
+
         if ("register".equals(action)) {
-            registerStudent(request, response);
-        } else {
-            response.sendRedirect("students.jsp");
+            handleRegistration(request, response);
+        } else if ("search".equals(action)) {
+            handleSearch(request, response);
         }
     }
 
-    private void registerStudent(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        System.out.println("Register request received");
+    private void handleRegistration(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String name = request.getParameter("name").trim();
+        String email = request.getParameter("email").trim().toLowerCase();
+        String telephone = request.getParameter("telephone").trim();
+        String batchIdStr = request.getParameter("batch_id");
 
-        String name = request.getParameter("name");
-        String telephone = request.getParameter("telephone");
-        String email = request.getParameter("email");
-        String batchIdStr = request.getParameter("batchId");
+        Integer batchId = (batchIdStr == null || batchIdStr.isEmpty()) ? null : Integer.parseInt(batchIdStr);
 
-        int batchId = (batchIdStr != null && !batchIdStr.isEmpty()) ? Integer.parseInt(batchIdStr) : 0;
-        Students student = new Students(0, name, telephone, email, batchId);
+        System.out.println("DEBUG: Name = " + name + ", Email = " + email + ", Telephone = " + telephone + ", Batch ID = " + batchId);
 
-        boolean isRegistered = studentsService.registerStudent(student);
+        Students student = new Students(name, telephone, email, batchId);
+        boolean isAdded = studentsService.addStudent(student);
 
-        if (isRegistered) {
-            request.getSession().setAttribute("message", "Student registered successfully!");
+        if (isAdded) {
+            System.out.println("DEBUG: Student registration successful!");
+            response.sendRedirect("StudentsController");
         } else {
-            request.getSession().setAttribute("error", "Failed to register student!");
+            System.out.println("DEBUG: Student registration failed!");
+            response.sendRedirect("students.jsp?error=true");
         }
-        response.sendRedirect("students.jsp");
     }
 
-    private void searchStudent(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        System.out.println("Search request received");
+    private void handleSearch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("search_name").trim();
+        String email = request.getParameter("search_email").trim().toLowerCase();
 
-        String name = request.getParameter("searchName");
-        String email = request.getParameter("searchEmail");
+        System.out.println("DEBUG: Searching for Name: " + name + ", Email: " + email);
 
-        Students student = studentsService.searchStudent(name, email);
-        if (student != null) {
+        Students student = studentsService.getStudent(name, email);
+        List<Batches> batchesList = batchesService.getAllBatches();
+        request.setAttribute("batchesList", batchesList);
+
+        if (student == null) {
+            request.setAttribute("message", "No student found.");
+        } else {
             request.setAttribute("student", student);
-        } else {
-            request.setAttribute("error", "Student not found!");
         }
+
         request.getRequestDispatcher("students.jsp").forward(request, response);
     }
 }
