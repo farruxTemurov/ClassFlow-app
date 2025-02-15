@@ -6,7 +6,6 @@ import com.zumba.dao.BatchesDAO;
 import java.util.List;
 
 public class BatchesService {
-
     private BatchesDAO batchesDAO;
 
     public BatchesService() {
@@ -26,6 +25,12 @@ public class BatchesService {
     }
 
     public List<Batches> getAllBatches() {
-        return batchesDAO.getAllBatches();
+        List<Batches> batches = batchesDAO.getAllBatches();
+        if (batches == null || batches.isEmpty()) {
+            System.out.println("DEBUG: No batches found in database.");
+        } else {
+            System.out.println("DEBUG: Number of batches fetched: " + batches.size());
+        }
+        return batches;
     }
 }

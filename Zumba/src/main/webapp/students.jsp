@@ -62,7 +62,7 @@
             <input type="text" id="studentPhone" name="telephone" required>
 
             <label for="batch">Select Batch:</label>
-            <select id="batch" name="batch_id">
+            <select id="batch" name="batch_id" required>
                 <option value="">-- Select Batch --</option>
                 <%
                     List<Batches> batchesList = (List<Batches>) request.getAttribute("batchesList");

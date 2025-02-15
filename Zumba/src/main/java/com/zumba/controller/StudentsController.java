@@ -24,15 +24,15 @@ public class StudentsController extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("DEBUG: StudentsController - Handling GET request...");
+        System.out.println("DEBUG: Handling GET request...");
 
-        // Fetch batches
         List<Batches> batchesList = batchesService.getAllBatches();
+        if (batchesList == null || batchesList.isEmpty()) {
+            System.out.println("DEBUG: No batches found.");
+        } else {
+            System.out.println("DEBUG: Batches retrieved: " + batchesList.size());
+        }
         request.setAttribute("batchesList", batchesList);
-
-        System.out.println("DEBUG: Number of batches retrieved: " + (batchesList != null ? batchesList.size() : "null"));
-
-        // Forward to students.jsp
         request.getRequestDispatcher("students.jsp").forward(request, response);
     }
 
@@ -49,7 +49,7 @@ public class StudentsController extends HttpServlet {
         }
     }
 
-    private void handleRegistration(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleRegistration(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String name = request.getParameter("name").trim();
         String email = request.getParameter("email").trim().toLowerCase();
         String telephone = request.getParameter("telephone").trim();
@@ -64,10 +64,11 @@ public class StudentsController extends HttpServlet {
 
         if (isAdded) {
             System.out.println("DEBUG: Student registration successful!");
-            response.sendRedirect("StudentsController");
+            response.sendRedirect("StudentsController"); // Reload the page
         } else {
             System.out.println("DEBUG: Student registration failed!");
-            response.sendRedirect("students.jsp?error=true");
+            request.setAttribute("errorMessage", "Student registration failed!");
+            doGet(request, response); // Reload page with updated batch list
         }
     }
 
@@ -82,8 +83,10 @@ public class StudentsController extends HttpServlet {
         request.setAttribute("batchesList", batchesList);
 
         if (student == null) {
+            System.out.println("DEBUG: No student found.");
             request.setAttribute("message", "No student found.");
         } else {
+            System.out.println("DEBUG: Student found: " + student.getName());
             request.setAttribute("student", student);
         }
 
