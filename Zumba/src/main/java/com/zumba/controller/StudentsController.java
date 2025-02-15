@@ -32,9 +32,13 @@ public class StudentsController extends HttpServlet {
         } else {
             System.out.println("DEBUG: Batches retrieved: " + batchesList.size());
         }
+        
         request.setAttribute("batchesList", batchesList);
+
+        // Ensure the page always gets this attribute
         request.getRequestDispatcher("students.jsp").forward(request, response);
     }
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("DEBUG: StudentsController POST request received");
@@ -80,7 +84,7 @@ public class StudentsController extends HttpServlet {
 
         Students student = studentsService.getStudent(name, email);
         List<Batches> batchesList = batchesService.getAllBatches();
-        request.setAttribute("batchesList", batchesList);
+        request.setAttribute("batchesList", batchesList); // Ensure batches are set
 
         if (student == null) {
             System.out.println("DEBUG: No student found.");
@@ -92,4 +96,5 @@ public class StudentsController extends HttpServlet {
 
         request.getRequestDispatcher("students.jsp").forward(request, response);
     }
+
 }
