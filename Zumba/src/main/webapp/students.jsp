@@ -7,34 +7,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
         .container {
             width: 50%;
             margin: auto;
             padding: 20px;
             text-align: center;
         }
+
         form {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin: 10px 0 5px;
         }
+
         select, input {
             width: 100%;
             padding: 8px;
         }
-        button {
+
+        /* Styled buttons */
+        .form-btn {
             margin-top: 10px;
-            padding: 8px 15px;
-            background: #ff6600;
+            padding: 10px 15px;
+            background-color: #ff6600; /* Orange background */
             color: white;
             border: none;
             cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background 0.3s ease-in-out;
         }
-        button:hover {
-           background: #cc5200;
+
+        .form-btn:hover {
+            background-color: #cc5200; /* Darker orange for hover */
         }
+
         .result {
             margin-top: 20px;
             padding: 10px;
@@ -83,7 +103,7 @@
                 %>
             </select>
 
-            <button type="submit" name="action" value="register">Register</button>
+            <button type="submit" name="action" value="register" class="form-btn">Register</button>
         </form>
 
         <h2>Find Student</h2>
@@ -94,7 +114,7 @@
             <label for="search_email">Email:</label>
             <input type="email" name="search_email" required>
 
-            <button type="submit" name="action" value="search">Search</button>
+            <button type="submit" name="action" value="search" class="form-btn">Search</button>
         </form>
 
         <%-- Display Search Results --%>

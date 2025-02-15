@@ -11,7 +11,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 30vh; /* Adjust based on need */
+            height: 10vh; /* Adjust based on need */
             text-align: center;
         }
     </style>
