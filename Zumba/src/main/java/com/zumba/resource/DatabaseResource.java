@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseResource {
     private static final String URL = "jdbc:mysql://localhost:3306/zumba_app";
     private static final String USER = "root";
-    private static final String PASSWORD = "Farrux2006";
+    private static final String PASSWORD = ""; // type your MySQL password here
 
     static {
         try {
