@@ -34,7 +34,7 @@ String error = (String) request.getAttribute("error");
         <% } %>
 
         <form action="<%=request.getContextPath()%>/BatchesController" method="post">
-            <input type="text" name="batchType" placeholder="Batch Type (e.g., Beginner, Advanced)" required>
+            <input type="text" name="batchType" placeholder="Batch Type (e.g., Morning Evening" required>
             <input type="text" name="batchTime" placeholder="Batch Time (e.g., 10:00 AM - 11:00 AM)" required>
             <button type="submit" name="action" value="add">Add Batch</button>
         </form>
